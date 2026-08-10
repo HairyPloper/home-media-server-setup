@@ -30,7 +30,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/jackett:/config"
-      - "${SERVER_ROOT:-D:/server}/torrents:/downloads"
+      - "${DATA_ROOT:-D:/server}/torrents:/downloads"
     ports:
       - "8081:9117"
     labels:
@@ -65,8 +65,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/sonarr:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
-      - "${SERVER_ROOT:-D:/server}/torrents:/data/torrents"
+      - "${DATA_ROOT:-D:/server}:/data"
     ports:
       - "8083:8989"
     labels:
@@ -84,8 +83,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/radarr:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
-      - "${SERVER_ROOT:-D:/server}/torrents:/data/torrents"
+      - "${DATA_ROOT:-D:/server}:/data"
     ports:
       - "8084:7878"
     labels:
@@ -103,8 +101,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/lidarr:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
-      - "${SERVER_ROOT:-D:/server}/torrents:/data/torrents"
+      - "${DATA_ROOT:-D:/server}:/data"
     ports:
       - "8085:8686"
     labels:
@@ -122,8 +119,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/bazarr:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
-      - "${SERVER_ROOT:-D:/server}/torrents:/data/torrents"
+      - "${DATA_ROOT:-D:/server}/media:/data/media"
     ports:
       - "8086:6767"
     labels:
@@ -148,7 +144,7 @@ services:
                capabilities: [gpu]
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/jellyfin:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
+      - "${DATA_ROOT:-D:/server}/media:/data/media"
     ports:
       - "8087:8096"
     labels:
@@ -176,7 +172,7 @@ services:
                capabilities: [gpu]
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/plex:/config"
-      - "${SERVER_ROOT:-D:/server}/media:/data/media"
+      - "${DATA_ROOT:-D:/server}/media:/data/media"
     ports:
       - "8088:32400"
     labels:
@@ -266,8 +262,8 @@ services:
       - RPC_WHITELIST_ENABLED=false
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/transmission:/config"
-      - "${SERVER_ROOT:-D:/server}/torrents:/data/torrents"
-      - "${SERVER_ROOT:-D:/server}/torrents/incomplete:/data/torrents/incomplete"
+      - "${DATA_ROOT:-D:/server}/torrents:/data/torrents"
+      - "${DATA_ROOT:-D:/server}/torrents/incomplete:/data/torrents/incomplete"
       - "${SERVER_ROOT:-D:/server}/watch:/watch"
     ports:
       - "9095:9091"
