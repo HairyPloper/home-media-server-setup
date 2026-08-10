@@ -1,0 +1,18 @@
+# Local settings and secrets
+.env
+.env.*
+!.env.example
+
+# Local overrides and generated files
+compose.override.yml
+docker-compose.override.yml
+*.log
+*.bak
+*.bak.*
+*.tmp
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
