@@ -105,6 +105,9 @@ if ($LASTEXITCODE -ne 0) {
 if ($LASTEXITCODE -ne 0) {
     throw 'The Docker daemon is not running or is not accessible.'
 }
+if (-not (Get-Command nvidia-smi -ErrorAction SilentlyContinue)) {
+    Write-Warning 'No NVIDIA tooling was detected. Remove the Jellyfin/Plex GPU reservation blocks before starting on a CPU-only host.'
+}
 
 $reuseEnv = $false
 if ((Test-Path -LiteralPath $envFile) -and -not $Force) {
@@ -117,10 +120,12 @@ elseif ($ValidateOnly) {
 $defaultDataRoot = Join-Path (Split-Path -Parent $repoRoot) 'home-media-server-data'
 if ($reuseEnv) {
     $serverRoot = Get-EnvValue 'SERVER_ROOT' $defaultDataRoot
+    $dataRoot = Get-EnvValue 'DATA_ROOT' $serverRoot
     Write-Host "Using existing private settings from $envFile"
 }
 else {
-    $serverRoot = Read-WithDefault 'Data directory' $defaultDataRoot
+    $serverRoot = Read-WithDefault 'Configuration and stack directory' $defaultDataRoot
+    $dataRoot = Read-WithDefault 'Media and download data directory' (Join-Path $serverRoot 'data')
     $timezone = Read-WithDefault 'IANA timezone' 'Etc/UTC'
     $puid = Read-WithDefault 'Container PUID' '1000'
     $pgid = Read-WithDefault 'Container PGID' '1000'
@@ -148,6 +153,7 @@ else {
     $envLines = @(
         'COMPOSE_PROJECT_NAME=home-media-server'
         "SERVER_ROOT=$(ConvertTo-DotEnvValue ($serverRoot -replace '\\', '/'))"
+        "DATA_ROOT=$(ConvertTo-DotEnvValue ($dataRoot -replace '\\', '/'))"
         "PUID=$puid"
         "PGID=$pgid"
         "TZ=$(ConvertTo-DotEnvValue $timezone)"
@@ -159,18 +165,26 @@ else {
     Write-Host "Created private settings at $envFile" -ForegroundColor Green
 }
 
-$directories = @(
+$configDirectories = @(
     'configs/traefik', 'configs/jackett', 'configs/prowlarr', 'configs/sonarr',
     'configs/radarr', 'configs/lidarr', 'configs/bazarr', 'configs/jellyfin',
     'configs/plex', 'configs/ombi', 'configs/overseerr', 'configs/heimdall',
-    'configs/transmission', 'media/movies', 'media/music', 'media/tv',
-    'torrents/incomplete', 'watch'
+    'configs/transmission', 'watch'
 )
-foreach ($relativePath in $directories) {
+foreach ($relativePath in $configDirectories) {
     $target = Join-Path $serverRoot ($relativePath -replace '/', [IO.Path]::DirectorySeparatorChar)
     New-Item -ItemType Directory -Path $target -Force | Out-Null
 }
-Write-Host "Created the data directory tree under $serverRoot" -ForegroundColor Green
+$dataDirectories = @(
+    'media/movies', 'media/music', 'media/tv',
+    'torrents/incomplete', 'torrents/movies', 'torrents/music', 'torrents/tv'
+)
+foreach ($relativePath in $dataDirectories) {
+    $target = Join-Path $dataRoot ($relativePath -replace '/', [IO.Path]::DirectorySeparatorChar)
+    New-Item -ItemType Directory -Path $target -Force | Out-Null
+}
+Write-Host "Created configuration directories under $serverRoot" -ForegroundColor Green
+Write-Host "Created media and download directories under $dataRoot" -ForegroundColor Green
 
 Invoke-Compose @('config', '--quiet')
 Write-Host 'Compose configuration is valid.' -ForegroundColor Green

@@ -76,6 +76,9 @@ if ! docker info >/dev/null 2>&1; then
   printf 'The Docker daemon is not running or is not accessible.\n' >&2
   exit 1
 fi
+if ! command -v nvidia-smi >/dev/null 2>&1; then
+  printf 'Warning: no NVIDIA tooling was detected. Remove the Jellyfin/Plex GPU reservation blocks before starting on a CPU-only host.\n' >&2
+fi
 
 DEFAULT_DATA_ROOT="$(cd -- "$REPO_ROOT/.." && pwd)/home-media-server-data"
 REUSE_ENV='no'
@@ -85,9 +88,11 @@ fi
 
 if [[ "$REUSE_ENV" == 'yes' ]]; then
   SERVER_ROOT="$(get_env_value SERVER_ROOT "$DEFAULT_DATA_ROOT")"
+  DATA_ROOT="$(get_env_value DATA_ROOT "$SERVER_ROOT")"
   printf 'Using existing private settings from %s\n' "$ENV_FILE"
 else
-  SERVER_ROOT="$(read_default 'Data directory' "$DEFAULT_DATA_ROOT")"
+  SERVER_ROOT="$(read_default 'Configuration and stack directory' "$DEFAULT_DATA_ROOT")"
+  DATA_ROOT="$(read_default 'Media and download data directory' "$SERVER_ROOT/data")"
   TIMEZONE="$(read_default 'IANA timezone' 'Etc/UTC')"
   PUID_VALUE="$(read_default 'Container PUID' "$(id -u)")"
   PGID_VALUE="$(read_default 'Container PGID' "$(id -g)")"
@@ -108,6 +113,7 @@ else
   {
     printf 'COMPOSE_PROJECT_NAME=home-media-server\n'
     printf 'SERVER_ROOT=%s\n' "$(dotenv_quote "$SERVER_ROOT")"
+    printf 'DATA_ROOT=%s\n' "$(dotenv_quote "$DATA_ROOT")"
     printf 'PUID=%s\n' "$PUID_VALUE"
     printf 'PGID=%s\n' "$PGID_VALUE"
     printf 'TZ=%s\n' "$(dotenv_quote "$TIMEZONE")"
@@ -118,17 +124,24 @@ else
   printf 'Created private settings at %s\n' "$ENV_FILE"
 fi
 
-DIRECTORIES=(
+CONFIG_DIRECTORIES=(
   configs/traefik configs/jackett configs/prowlarr configs/sonarr
   configs/radarr configs/lidarr configs/bazarr configs/jellyfin
   configs/plex configs/ombi configs/overseerr configs/heimdall
-  configs/transmission media/movies media/music media/tv
-  torrents/incomplete watch
+  configs/transmission watch
 )
-for relative_path in "${DIRECTORIES[@]}"; do
+for relative_path in "${CONFIG_DIRECTORIES[@]}"; do
   mkdir -p -- "$SERVER_ROOT/$relative_path"
 done
-printf 'Created the data directory tree under %s\n' "$SERVER_ROOT"
+DATA_DIRECTORIES=(
+  media/movies media/music media/tv
+  torrents/incomplete torrents/movies torrents/music torrents/tv
+)
+for relative_path in "${DATA_DIRECTORIES[@]}"; do
+  mkdir -p -- "$DATA_ROOT/$relative_path"
+done
+printf 'Created configuration directories under %s\n' "$SERVER_ROOT"
+printf 'Created media and download directories under %s\n' "$DATA_ROOT"
 
 compose config --quiet
 printf 'Compose configuration is valid.\n'

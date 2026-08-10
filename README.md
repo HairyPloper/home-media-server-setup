@@ -2,6 +2,8 @@
 
 A Docker Compose media stack for Windows with Docker Desktop or a native Linux Docker host. It combines media management, indexers, request tools, download management, dashboards, and NVIDIA-enabled media servers behind Traefik.
 
+For the complete application-by-application walkthrough, see the **[Complete Setup Guide](docs/SETUP.md)**. It is adapted and modernized from [this r/selfhosted guide](https://www.reddit.com/r/selfhosted/comments/pqt5yv/the_complete_guide_to_building_your_personal_self/).
+
 ## Services
 
 | Service | Purpose | Local port |
@@ -28,7 +30,7 @@ All images use explicit stable tags for repeatable deployments. Jellyfin is deli
 - Docker Engine with the Compose v2 plugin, or Docker Desktop on Windows
 - At least 4 GB RAM; 8 GB or more is recommended
 - Sufficient storage for media and downloads
-- Optional: an NVIDIA GPU, current host driver, and NVIDIA Container Toolkit on native Linux
+- An NVIDIA GPU and current host integration for the supplied Compose file; CPU-only users must remove the GPU reservation blocks described below
 
 Do not expose these application ports directly to the public internet. The included Traefik configuration is intended for a trusted home network and local `*.local` hostnames.
 
@@ -84,23 +86,26 @@ Existing `.env` settings are reused by default. Reconfiguring creates a timestam
 
 2. Edit `.env`:
 
-   - Set `SERVER_ROOT` to an absolute host path.
+   - Set `SERVER_ROOT` to the absolute host path for configs and the watch folder.
+   - Set `DATA_ROOT` to a path containing `media` and `torrents` on one filesystem.
    - Set `TZ` to an IANA timezone such as `Europe/Budapest`.
    - Set a unique Transmission username and a long random password.
    - On native Linux, set `PUID` and `PGID` to the account that owns the data directories. Find them with `id`.
 
-3. Create the storage layout under `SERVER_ROOT`:
+3. Create the storage layout:
 
    ```text
    SERVER_ROOT/
-   ├── configs/
-   ├── media/
-   │   ├── movies/
-   │   ├── music/
-   │   └── tv/
-   ├── torrents/
-   │   └── incomplete/
-   └── watch/
+   |-- configs/
+   `-- watch/
+
+   DATA_ROOT/
+   |-- media/
+   |   |-- movies/
+   |   |-- music/
+   |   `-- tv/
+   `-- torrents/
+       `-- incomplete/
    ```
 
    Each container creates its own folder below `configs` when first started.
@@ -139,7 +144,7 @@ Containers on the Compose network can reach one another by service name and inte
 - Transmission: `http://transmission:9091`
 - FlareSolverr: `http://flaresolverr:8191`
 
-Use `/data/media` for libraries and `/data/torrents` for downloads inside Sonarr, Radarr, Lidarr, Bazarr, and Transmission. Keeping the same container paths allows reliable imports and hard links where the host filesystem supports them.
+Use `/data/media` for libraries and `/data/torrents` for downloads inside Sonarr, Radarr, Lidarr, Bazarr, and Transmission. `DATA_ROOT` is mounted once as `/data` in the *arr containers so imports can use hard links when the host filesystem supports them.
 
 ## NVIDIA acceleration
 
