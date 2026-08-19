@@ -177,6 +177,17 @@ services:
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/plex:/config"
       - "${SERVER_ROOT:-D:/server}/media:/data/media"
+      # Keep short-lived transcode files on Docker's Linux filesystem. This
+      # avoids intermittent subtitle/session file races on the Windows bind.
+      - "plex-transcode:/config/Library/Application Support/Plex Media Server/Cache/Transcode"
+    post_start:
+      # A newly-created named volume starts as root; Plex runs as abc.
+      - command: >-
+          /bin/sh -c "mkdir -p '/config/Library/Application Support/Plex Media Server/Cache/Transcode/Sessions' &&
+          chown -R abc:abc '/config/Library/Application Support/Plex Media Server/Cache/Transcode' &&
+          chmod 0755 '/config/Library/Application Support/Plex Media Server/Cache/Transcode'
+          '/config/Library/Application Support/Plex Media Server/Cache/Transcode/Sessions'"
+        user: root
     ports:
       - "8088:32400"
     labels:
@@ -279,3 +290,6 @@ services:
       - "traefik.http.routers.transmission.entrypoints=web"
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
     restart: unless-stopped
+
+volumes:
+  plex-transcode:
