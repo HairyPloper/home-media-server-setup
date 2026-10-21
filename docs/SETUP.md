@@ -7,7 +7,7 @@ Use the services only with media and indexers you are legally authorized to acce
 ## 1. Understand the workflow
 
 ```text
-Ombi / Overseerr
+Seerr
         |
         v
 Sonarr / Radarr / Lidarr <---- Prowlarr or Jackett ----> indexers
@@ -26,11 +26,11 @@ DATA_ROOT/torrents ---- hard link/import ----> DATA_ROOT/media
 - Sonarr, Radarr, and Lidarr send downloads to Transmission and import completed files.
 - Bazarr watches the Sonarr and Radarr libraries and adds subtitles.
 - Jellyfin and Plex serve the completed libraries.
-- Ombi or Overseerr provides a simpler request interface for other household users.
+- Seerr provides a simpler request interface for other household users.
 - Heimdall provides shortcuts to all web interfaces.
 - Traefik provides memorable local hostnames.
 
-Jackett overlaps with Prowlarr, and Ombi overlaps with Overseerr. They are all included so you can choose; most installations do not need both tools in either pair.
+Jackett overlaps with Prowlarr; choose the indexer manager that fits your setup. Seerr is the stack's media request application.
 
 ## 2. Prepare the host
 
@@ -232,15 +232,9 @@ You can operate Jellyfin, Plex, or both. Running both increases memory usage and
 
 ## 11. Configure requests
 
-### Overseerr
+### Seerr
 
-Open `http://SERVER_IP:8090`, sign in with Plex, and connect Sonarr and Radarr using their internal service names, ports, and API keys.
-
-### Ombi
-
-Open `http://SERVER_IP:8089` and follow its wizard to connect Jellyfin or Plex plus Sonarr and Radarr.
-
-Choose one request application for household users unless you have a specific reason to maintain both. Overseerr's upstream project and LinuxServer image are deprecated, so treat Ombi or a planned migration to Jellyseerr as the longer-term path.
+Open `http://SERVER_IP:8095` or `http://seerr.lan:8080`, complete the setup wizard, and connect your media server and the Sonarr and Radarr instances using their internal service names, ports, and API keys. The service is available at `http://seerr:5055` to other containers on the Compose network.
 
 ## 12. Configure Heimdall and Traefik
 

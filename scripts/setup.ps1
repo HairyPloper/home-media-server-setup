@@ -168,7 +168,7 @@ else {
 $configDirectories = @(
     'configs/traefik', 'configs/jackett', 'configs/prowlarr', 'configs/sonarr',
     'configs/radarr', 'configs/lidarr', 'configs/bazarr', 'configs/jellyfin',
-    'configs/plex', 'configs/ombi', 'configs/overseerr', 'configs/heimdall',
+    'configs/plex', 'configs/seerr', 'configs/heimdall',
     'configs/transmission', 'watch'
 )
 foreach ($relativePath in $configDirectories) {

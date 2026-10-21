@@ -127,7 +127,7 @@ fi
 CONFIG_DIRECTORIES=(
   configs/traefik configs/jackett configs/prowlarr configs/sonarr
   configs/radarr configs/lidarr configs/bazarr configs/jellyfin
-  configs/plex configs/ombi configs/overseerr configs/heimdall
+  configs/plex configs/seerr configs/heimdall
   configs/transmission watch
 )
 for relative_path in "${CONFIG_DIRECTORIES[@]}"; do
