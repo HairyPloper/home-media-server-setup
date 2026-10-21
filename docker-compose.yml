@@ -16,6 +16,11 @@ services:
        - "8080:80"      # web (HTTP) for testing
        - "8443:443"     # websecure (HTTPS) for testing
        - "8888:8080"    # Traefik dashboard
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.lan`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"   
     volumes:
       - "${SERVER_ROOT:-D:/server}/configs/traefik:/etc/traefik" # Traefik config & data
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -191,40 +196,57 @@ services:
       - "traefik.http.routers.plex.rule=Host(`plex.lan`)"
       - "traefik.http.routers.plex.entrypoints=web"
     restart: unless-stopped
-
-  ombi:
-    image: lscr.io/linuxserver/ombi:v4.53.10-ls265
-    container_name: ombi
+    
+  seerr:
+    image: ghcr.io/seerr-team/seerr:v3.5.0
+    container_name: seerr
+    init: true
     environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-    volumes:
-      - "${SERVER_ROOT:-D:/server}/configs/ombi:/config"
+      - LOG_LEVEL=info
+      - TZ=Europe/Belgrade
     ports:
-      - "8089:3579"
+      - "8095:5055"
+    volumes:
+      - "${SERVER_ROOT:-D:/server}/configs/seerr:/app/config"
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ombi.rule=Host(`ombi.lan`)"
-      - "traefik.http.routers.ombi.entrypoints=web"
-    restart: unless-stopped
+      - "traefik.http.routers.seerr.rule=Host(`seerr.lan`)"
+      - "traefik.http.routers.seerr.entrypoints=web"
+# This are old Web interfaces for managing media platfroms if you need them enable it here
+  # ombi:
+    # image: lscr.io/linuxserver/ombi:v4.53.10-ls265
+    # container_name: ombi
+    # environment:
+      # - PUID=${PUID:-1000}
+      # - PGID=${PGID:-1000}
+      # - TZ=${TZ:-Etc/UTC}
+    # volumes:
+      # - "${SERVER_ROOT:-D:/server}/configs/ombi:/config"
+    # ports:
+      # - "8089:3579"
+    # labels:
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.ombi.rule=Host(`ombi.lan`)"
+      # - "traefik.http.routers.ombi.entrypoints=web"
+    # restart: unless-stopped
 
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:v1.35.0-ls159
-    container_name: overseerr
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-    volumes:
-      - "${SERVER_ROOT:-D:/server}/configs/overseerr:/config"
-    ports:
-      - "8090:5055"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.overseerr.rule=Host(`overseerr.lan`)"
-      - "traefik.http.routers.overseerr.entrypoints=web"
-    restart: unless-stopped
+  # overseerr:
+    # image: lscr.io/linuxserver/overseerr:v1.35.0-ls159
+    # container_name: overseerr
+    # environment:
+      # - PUID=${PUID:-1000}
+      # - PGID=${PGID:-1000}
+      # - TZ=${TZ:-Etc/UTC}
+    # volumes:
+      # - "${SERVER_ROOT:-D:/server}/configs/overseerr:/config"
+    # ports:
+      # - "8090:5055"
+    # labels:
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.overseerr.rule=Host(`overseerr.lan`)"
+      # - "traefik.http.routers.overseerr.entrypoints=web"
+    # restart: unless-stopped
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:v3.5.0
