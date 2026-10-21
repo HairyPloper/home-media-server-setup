@@ -35,7 +35,7 @@ services:
       - "8081:9117"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.jackett.rule=Host(`jackett.local`)"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.lan`)"
       - "traefik.http.routers.jackett.entrypoints=web"
     restart: unless-stopped
 
@@ -52,7 +52,7 @@ services:
       - "8082:9696"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.local`)"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.lan`)"
       - "traefik.http.routers.prowlarr.entrypoints=web"
     restart: unless-stopped
 
@@ -70,7 +70,7 @@ services:
       - "8083:8989"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.local`)"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.lan`)"
       - "traefik.http.routers.sonarr.entrypoints=web"
     restart: unless-stopped
 
@@ -88,7 +88,7 @@ services:
       - "8084:7878"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.radarr.rule=Host(`radarr.local`)"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.lan`)"
       - "traefik.http.routers.radarr.entrypoints=web"
     restart: unless-stopped
 
@@ -106,7 +106,7 @@ services:
       - "8085:8686"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.lidarr.rule=Host(`lidarr.local`)"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.lan`)"
       - "traefik.http.routers.lidarr.entrypoints=web"
     restart: unless-stopped
 
@@ -124,7 +124,7 @@ services:
       - "8086:6767"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.bazarr.rule=Host(`bazarr.local`)"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.lan`)"
       - "traefik.http.routers.bazarr.entrypoints=web"
     restart: unless-stopped
 
@@ -149,7 +149,7 @@ services:
       - "8087:8096"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.local`)"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.lan`)"
       - "traefik.http.routers.jellyfin.entrypoints=web"
     restart: unless-stopped
 
@@ -188,7 +188,7 @@ services:
       - "8088:32400"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.plex.rule=Host(`plex.local`)"
+      - "traefik.http.routers.plex.rule=Host(`plex.lan`)"
       - "traefik.http.routers.plex.entrypoints=web"
     restart: unless-stopped
 
@@ -205,7 +205,7 @@ services:
       - "8089:3579"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ombi.rule=Host(`ombi.local`)"
+      - "traefik.http.routers.ombi.rule=Host(`ombi.lan`)"
       - "traefik.http.routers.ombi.entrypoints=web"
     restart: unless-stopped
 
@@ -222,7 +222,7 @@ services:
       - "8090:5055"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.overseerr.rule=Host(`overseerr.local`)"
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.lan`)"
       - "traefik.http.routers.overseerr.entrypoints=web"
     restart: unless-stopped
 
@@ -237,7 +237,7 @@ services:
       - "8093:8191"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.local`)"
+      - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.lan`)"
       - "traefik.http.routers.flaresolverr.entrypoints=web"
     restart: unless-stopped
 
@@ -254,7 +254,7 @@ services:
       - "8094:80"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.heimdall.rule=Host(`heimdall.local`)"
+      - "traefik.http.routers.heimdall.rule=Host(`heimdall.lan`)"
       - "traefik.http.routers.heimdall.entrypoints=web"
       - "traefik.http.services.heimdall.loadbalancer.server.port=80"
     restart: unless-stopped
@@ -282,7 +282,7 @@ services:
       - "51414:51413/udp"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`transmission.local`)"
+      - "traefik.http.routers.transmission.rule=Host(`transmission.lan`)"
       - "traefik.http.routers.transmission.entrypoints=web"
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
     restart: unless-stopped

@@ -246,11 +246,11 @@ Choose one request application for household users unless you have a specific re
 
 Open `http://SERVER_IP:8094` and add tiles for the services you actually use.
 
-The Compose labels also define `*.local` Traefik routes. Add the hostnames from the main README to local DNS or the client hosts file, then access them through port 8080, for example:
+The Compose labels also define `*.lan` Traefik routes. Add the hostnames from the main README to local DNS or the client hosts file, then access them through port 8080, for example:
 
 ```text
-http://sonarr.local:8080
-http://jellyfin.local:8080
+http://sonarr.lan:8080
+http://jellyfin.lan:8080
 ```
 
 The included dashboard uses Traefik's insecure local API and is published on port 8888. Keep it restricted to a trusted LAN. Before any internet exposure, disable the insecure dashboard, configure authenticated HTTPS, and prefer VPN access.

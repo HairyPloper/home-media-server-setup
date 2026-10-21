@@ -32,7 +32,7 @@ All images use explicit stable tags for repeatable deployments. Jellyfin is deli
 - Sufficient storage for media and downloads
 - An NVIDIA GPU and current host integration for the supplied Compose file; CPU-only users must remove the GPU reservation blocks described below
 
-Do not expose these application ports directly to the public internet. The included Traefik configuration is intended for a trusted home network and local `*.local` hostnames.
+Do not expose these application ports directly to the public internet. The included Traefik configuration is intended for a trusted home network and local `*.lan` hostnames.
 
 ## Quick setup wizard
 
@@ -123,15 +123,15 @@ Existing `.env` settings are reused by default. Reconfiguring creates a timestam
 
 ## Local Traefik names
 
-The stack includes routes such as `sonarr.local` and `radarr.local`. To use them, point those names at the Docker host with local DNS or add entries to your hosts file. Examples:
+The stack includes routes such as `sonarr.lan` and `radarr.lan`. To use them, point those names at the Docker host with local DNS or add entries to your hosts file. Examples:
 
 ```text
-127.0.0.1 jackett.local prowlarr.local sonarr.local radarr.local lidarr.local
-127.0.0.1 bazarr.local jellyfin.local plex.local ombi.local overseerr.local
-127.0.0.1 flaresolverr.local heimdall.local transmission.local
+127.0.0.1 jackett.lan prowlarr.lan sonarr.lan radarr.lan lidarr.lan
+127.0.0.1 bazarr.lan jellyfin.lan plex.lan ombi.lan overseerr.lan
+127.0.0.1 flaresolverr.lan heimdall.lan transmission.lan
 ```
 
-With the supplied port mapping, HTTP routes are reached through `http://SERVICE.local:8080`.
+With the supplied port mapping, HTTP routes are reached through `http://SERVICE.lan:8080`.
 
 ## Application integration
 
